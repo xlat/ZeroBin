@@ -283,6 +283,7 @@ function open_reply(source, commentid) {
  * Send a reply in a discussion.
  * @param string parentid : the comment identifier we want to send a reply to.
  */
+var previousNick = null;
 function send_comment(parentid) {
     // Do not send if no data.
     if ($('textarea#replymessage').val().length==0) {
@@ -292,8 +293,9 @@ function send_comment(parentid) {
     showStatus('Sending comment...', spin=true);
     var cipherdata = zeroCipher(pageKey(), $('textarea#replymessage').val());
     var ciphernickname = '';
-    var nick=$('input#nickname').val();
+    var nick=$('input#nickname').val() || previousNick;
     if (nick != '' && nick != 'Optional nickname...') {
+        previousNick = nick;
         ciphernickname = zeroCipher(pageKey(), nick);
     }
     var data_to_send = { data:cipherdata,
