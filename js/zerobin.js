@@ -615,10 +615,8 @@ $(function() {
 
 //restitue previous used nickname
 $( document ).ready(function(){
-    $( window ).bind('popstate', function(event){
-        var state = event.originalEvent.state || event.state;
-        if( state && state.prevnickname ){
-            prevnickname = state.prevnickname;
-        }
-    });
+    var state = history.state;
+    if( state && state.prevnickname ){
+        prevnickname = state.prevnickname;
+    }
 });
