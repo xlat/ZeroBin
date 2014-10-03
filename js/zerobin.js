@@ -314,8 +314,7 @@ function send_comment(parentid) {
                 showStatus('Comment posted.');
                 var state = { };
                 state['prevnickname'] = nick;
-                var url = location.href.substring(0, location.href.length - location.hash.length);
-                history.replaceState( state, document.title, url);
+                history.replaceState( state, document.title, location.href);
                 location.reload();
             }
             else if (data.status==1) {
