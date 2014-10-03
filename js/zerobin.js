@@ -265,7 +265,7 @@ function displayMessages(key, comments) {
 function open_reply(source, commentid) {
     $('div.reply').remove(); // Remove any other reply area.
     source.after('<div class="reply">'
-                + '<input type="text" id="nickname" title="Optional nickname..." value="Optional nickname..." />'
+                + '<input type="text" id="nickname" title="Optional nickname..." value="'+ (previousNick||'Optional nickname...') +'" />'
                 + '<textarea id="replymessage" class="replymessage" cols="80" rows="7"></textarea>'
                 + '<br><button id="replybutton" onclick="send_comment(\'' + commentid + '\');return false;">Post comment</button>'
                 + '<div id="replystatus">&nbsp;</div>'
