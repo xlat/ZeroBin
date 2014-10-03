@@ -9,7 +9,7 @@
 sjcl.random.startCollectors();
 
 //last nickname
-var previous = 'Optional nickname...';
+var prevnickname = 'Optional nickname...';
 
 /**
  *  Converts a duration (in seconds) into human readable format.
