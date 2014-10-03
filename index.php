@@ -4,6 +4,7 @@ ZeroBin - a zero-knowledge paste bin
 Please see project page: http://sebsauvage.net/wiki/doku.php?id=php:zerobin
 */
 $VERSION='Alpha 0.19';
+$SECONDS_LIMITS=1; //limitation between each post
 if (version_compare(PHP_VERSION, '5.2.6') < 0) die('ZeroBin requires php 5.2.6 or above to work. Sorry.');
 require_once "lib/serversalt.php";
 require_once "lib/vizhash_gd_zero.php";
@@ -17,8 +18,8 @@ if (get_magic_quotes_gpc())
     $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
 }
 
-// trafic_limiter : Make sure the IP address makes at most 1 request every 10 seconds.
-// Will return false if IP address made a call less than 10 seconds ago.
+// trafic_limiter : Make sure the IP address makes at most 1 request every $SECONDS_LIMITS seconds.
+// Will return false if IP address made a call less than $SECONDS_LIMITS seconds ago.
 function trafic_limiter_canPass($ip)
 {
     $tfilename='./data/trafic_limiter.php';
@@ -29,7 +30,7 @@ function trafic_limiter_canPass($ip)
     }
     require $tfilename;
     $tl=$GLOBALS['trafic_limiter'];
-    if (!empty($tl[$ip]) && ($tl[$ip]+10>=time()))
+    if (!empty($tl[$ip]) && ($tl[$ip]+$SECONDS_LIMITS>=time()))
     {
         return false;
         // FIXME: purge file of expired IPs to keep it small
@@ -158,7 +159,7 @@ if (!empty($_POST['data'])) // Create new paste/comment
 
     // Make sure last paste from the IP address was more than 10 seconds ago.
     if (!trafic_limiter_canPass($_SERVER['REMOTE_ADDR']))
-        { echo json_encode(array('status'=>1,'message'=>'Please wait 10 seconds between each post.')); exit; }
+        { echo json_encode(array('status'=>1,'message'=>'Please wait $SECONDS_LIMITS seconds between each post.')); exit; }
 
     // Make sure content is not too big.
     $data = $_POST['data'];
