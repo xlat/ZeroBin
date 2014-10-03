@@ -8,6 +8,9 @@
 // Immediately start random number generator collector.
 sjcl.random.startCollectors();
 
+//last nickname
+var previous = 'Optional nickname...';
+
 /**
  *  Converts a duration (in seconds) into human readable format.
  *
@@ -265,7 +268,7 @@ function displayMessages(key, comments) {
 function open_reply(source, commentid) {
     $('div.reply').remove(); // Remove any other reply area.
     source.after('<div class="reply">'
-                + '<input type="text" id="nickname" title="Optional nickname..." value="'+ (previousNick||'Optional nickname...') +'" />'
+                + '<input type="text" id="nickname" title="Optional nickname..." value="'+prevnickname+'" />'
                 + '<textarea id="replymessage" class="replymessage" cols="80" rows="7"></textarea>'
                 + '<br><button id="replybutton" onclick="send_comment(\'' + commentid + '\');return false;">Post comment</button>'
                 + '<div id="replystatus">&nbsp;</div>'
@@ -283,7 +286,6 @@ function open_reply(source, commentid) {
  * Send a reply in a discussion.
  * @param string parentid : the comment identifier we want to send a reply to.
  */
-var previousNick = null;
 function send_comment(parentid) {
     // Do not send if no data.
     if ($('textarea#replymessage').val().length==0) {
@@ -293,9 +295,8 @@ function send_comment(parentid) {
     showStatus('Sending comment...', spin=true);
     var cipherdata = zeroCipher(pageKey(), $('textarea#replymessage').val());
     var ciphernickname = '';
-    var nick=$('input#nickname').val() || previousNick;
+    var nick=$('input#nickname').val();
     if (nick != '' && nick != 'Optional nickname...') {
-        previousNick = nick;
         ciphernickname = zeroCipher(pageKey(), nick);
     }
     var data_to_send = { data:cipherdata,
@@ -311,6 +312,9 @@ function send_comment(parentid) {
         .success(function(data) {
             if (data.status == 0) {
                 showStatus('Comment posted.');
+                var state = { };
+                state['prevnickname'] = nickname;
+                history.replaceState( state, document.title, this.href);
                 location.reload();
             }
             else if (data.status==1) {
@@ -607,4 +611,14 @@ $(function() {
     else {
         newPaste();
     }
+});
+
+//restitue previous used nickname
+$( document ).ready(function(){
+    $( window ).bind('popstate', function(event){
+        var state = event.originalEvent.state || event.state;
+        if( state && state.prevnickname ){
+            prevnickname = state.prevnickname;
+        }
+    });
 });
