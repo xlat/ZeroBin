@@ -313,8 +313,9 @@ function send_comment(parentid) {
             if (data.status == 0) {
                 showStatus('Comment posted.');
                 var state = { };
-                state['prevnickname'] = nickname;
-                history.replaceState( state, document.title, this.href);
+                state['prevnickname'] = nick;
+                var url = location.href.substring(0, location.href.length - location.hash.length);
+                history.replaceState( state, document.title, url);
                 location.reload();
             }
             else if (data.status==1) {
